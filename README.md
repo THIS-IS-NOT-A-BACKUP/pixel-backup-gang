@@ -38,7 +38,7 @@ this method is basically a hack around the selinux policies + app permissions us
 
 ## installation
 
-installation is essentially just copying the scripts to the device & making them executable. you can do this manually, or use one of the automated steps below.
+installation is essentially just copying the scripts to the device & making them executable. you can do this manually, or use one of the automated steps below. you also probably want to disable [Google Play Protect](https://developers.google.com/android/play-protect) scanning in the Play Store menu.
 
 ### via pixel terminal
 1. start a terminal application and navigate to the directory where you want to install the scripts
@@ -84,4 +84,5 @@ installation is essentially just copying the scripts to the device & making them
 **everything located under `/the_binding` in the internal storage should now be gone. you can disconnect the drive if you're sure all pending writes have been flushed.**
 
 ## notes
-TODO
+* currently, the mounting script disables selinux security controls entirely, which is quite unsafe - please don't have any kind of untrusted apps installed on your device while using this. selinux remains disabled until the next boot, or you can run the command `setenforce 1` to re-enable it earlier. don't forget that the software on the pixel is severely out of date and there are a lot of serious known vulnerabilities. try to keep device radios off (especially bluetooth and NFC) to reduce the attack surface.
+* my recommendation for regular usage is to find your drive's filesystem UUID using `./show_devices.sh` and store it. you can then use this UUID in a script to always re-mount that same drive without having to figure out what the block device path is at e.g. something like `./mount_ext4.sh $(./find_device.sh ./my_drive_id.txt)`
