@@ -1,6 +1,7 @@
 # pixel backup gang
 
-mount ext4 drives into the google pixel's internal storage
+mount ext4 drives & remount FAT32 drives into the google pixel's internal storage
+
 
 **WARNING: this code is experimental and there is no guarantee that it works. rooting your phone or running any commands as root can be very dangerous. you have been warned.**
 
@@ -34,7 +35,7 @@ this method is basically a hack around the selinux policies + app permissions us
 
 ## prerequisites
 * a Google Pixel (sailfish) or Google Pixel XL (marlin) on Android 10, rooted with [Magisk](https://github.com/topjohnwu/Magisk). may work on other phones.
-* a USB storage drive formatted with an ext4 filesystem. other filesystems not currently supported.
+* a USB storage drive formatted with an ext4 or FAT32 filesystem.
 
 ## installation
 
@@ -67,12 +68,19 @@ installation is essentially just copying the scripts to the device & making them
     * the Magisk "force the global mount namespace" doesn't work - maybe it only works for magisk modules?
 
 ### mounting
+
+#### ext4 drives
 1. connect the ext4 formatted external drive to the pixel. you should get an os notification that says the drive is not supported. clear or ignore this notification.
    * this notification directs you to format the drive in FAT32 - don't do that
 1. find the block device that you want to mount. it is usually found at `/dev/block/sdg1` but changes when devices are connected and disconnected.
    * if you don't know the filesystem UUID, use `./show_devices.sh`
    * if you know the filesystem UUID, use `./find_device.sh`
 1. run `./mount_ext4.sh <BLOCK_DEVICE>` e.g. `./mount_ext4.sh /dev/block/sdg1`
+
+#### FAT32 drives
+1. connect the FAT32 formatted external drive to the pixel. it should be working normally as removable storage i.e. readable & writable by apps with permission.
+1. find the name of folder that the drive is mounted to. it looks like `/mnt/media_rw/2IDK-11F4` - you can check the path displayed in any file explorer app.
+1. run `./remount_vfat.sh <MOUNTED_FOLDER>` e.g. `./remount_vfat.sh /mnt/media_rw/2IDK-11F4`
 
 **everything located under `/the_binding` on the external drive should now be visible by apps at `/the_binding` in the internal storage**
 
@@ -85,5 +93,6 @@ installation is essentially just copying the scripts to the device & making them
 
 ## notes
 * currently, the mounting script disables selinux security controls entirely, which is quite unsafe - please don't have any kind of untrusted apps installed on your device while using this. selinux remains disabled until the next boot, or you can run the command `setenforce 1` to re-enable it earlier. don't forget that the software on the pixel is severely out of date and there are a lot of serious known vulnerabilities. try to keep device radios off (especially bluetooth and NFC) to reduce the attack surface.
+* this scripts in this repo should not make any changes to a pixel that persist past a reboot (besides the scripts themselves existing wherever you saved them)
 * my recommendation for regular usage is to find your drive's filesystem UUID using `./show_devices.sh` and store it. you can then use this UUID in a script to always re-mount that same drive without having to figure out what the block device path is at e.g. something like `./mount_ext4.sh $(./find_device.sh ./my_drive_id.txt)`
 * excellent reference: https://android.stackexchange.com/questions/214288/how-to-stop-apps-writing-to-android-folder-on-the-sd-card/257401
