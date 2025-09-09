@@ -2,8 +2,8 @@
 
 mount ext4 drives & remount VFAT/FAT32 drives into the google pixel's internal storage
 
-
-**WARNING: this code is experimental and there is no guarantee that it works. rooting your phone or running any commands as root can be very dangerous. you have been warned.**
+> [!WARNING]  
+> this code is experimental and there is no guarantee that it works. rooting your phone or running any commands as root can be very dangerous. you have been warned.
 
 anyway here is a demo image of an SSD mounted into the "internal storage" on my Pixel XL. the data is readable & writable in the Google Photos app.
 ![image](assets/demo.jpg)
@@ -19,18 +19,18 @@ this method is basically a hack around the selinux policies + app permissions us
 
 (if you don't care about using these scripts and just want to see how it's done, take a look at [mount_ext4.sh](scripts/mount_ext4.sh))
 
-## the good
+### the good
 * works with the stock kernel
 * backs up external files larger than 4gb (stock OS only supports FAT32 for external drives)
 * reduces wear on internal flash storage by up to 50% (see https://github.com/master-hax/pixel-backup-gang/issues/30)
 * prevents device from overheating - the external drive gets hot instead
 * makes 32gb pixels viable for mass backup
 
-## the bad
+### the bad
 * phone needs to be rooted
 * there's currently no way to auto-mount when the disk is connected
 
-## the ugly
+### the ugly
 * there's no GUI, you need to execute shell scripts
 
 ## prerequisites
@@ -88,6 +88,9 @@ this is the preferred installation method for development as it doesn't require 
 1. run `./remount_vfat.sh <MOUNTED_FOLDER>` e.g. `./remount_vfat.sh /mnt/media_rw/2IDK-11F4`
 
 **everything located under `/the_binding` on the external drive should now be visible by apps at `/the_binding` in the internal storage**
+
+> [!NOTE]  
+> We send a media scan broadcast when the drive is mounted ([ext4](https://github.com/master-hax/pixel-backup-gang/blob/87a0fcc2d4481a54e5c8750bfbf2be8fcee0f50d/scripts/mount_ext4.sh#L52-L54),[VFAT](https://github.com/master-hax/pixel-backup-gang/blob/87a0fcc2d4481a54e5c8750bfbf2be8fcee0f50d/scripts/remount_vfat.sh#L60-L63)) - however, you may need to force close then re-open Google Photos for it to notice the new files.
 
 ### unmounting
 
